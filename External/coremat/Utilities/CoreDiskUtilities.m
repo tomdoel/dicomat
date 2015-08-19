@@ -234,7 +234,7 @@ classdef CoreDiskUtilities
                 [dir_path, ~, ~] = fileparts(filename);
                 exist_result_2 = exist(dir_path, 'file');
                 if exist_result_2 ~= 0
-                    rrror('CoreDiskUtilities:DirectoryDoesNotExist', 'The argument passed to CoreDiskUtilities.GetDirectoryForFile() does not exist or is not a directory.');
+                    error('CoreDiskUtilities:DirectoryDoesNotExist', 'The argument passed to CoreDiskUtilities.GetDirectoryForFile() does not exist or is not a directory.');
                 else
                     dir = dir_path;
                 end
@@ -267,6 +267,39 @@ classdef CoreDiskUtilities
             print(figure_handle, '-depsc2', resolution_str, figure_filename);   % Export to .eps
             print(figure_handle, '-dpng', resolution_str, figure_filename);     % Export .png
         end
+        
+        function matlab_name_list = GetAllMatlabFilesInFolders(folders_to_scan)
+            % Takes in a list of CorePairs
+            
+            folders_to_scan = CoreStack(folders_to_scan);
+            mfilesFound = CoreStack;
+            while ~folders_to_scan.IsEmpty
+                next_folder = folders_to_scan.Pop;
+                next_plugin_list = CoreDiskUtilities.GetDirectoryFileList(next_folder.First, '*.m');
+                for next_plugin = next_plugin_list
+                    mfilesFound.Push(CorePair(CoreTextUtilities.StripFileparts(next_plugin{1}), next_folder.Second));
+                end
+            end
+            matlab_name_list = mfilesFound.GetAndClear;
+        end        
+                    
+        function fileNames = GetRecursiveListOfFiles(startDir, filenameFilter)
+            % Returns a list of all files in this directory and its
+            % subdirectories matching the filename criteria
+            
+            [absoluteFilePath, ~] = CoreDiskUtilities.GetFullFileParts(startDir);
+            filesFound = CoreStack;
+            
+            directories = CoreDiskUtilities.GetRecursiveListOfDirectories(absoluteFilePath);
+            for directory = directories
+                fileList = CoreDiskUtilities.GetDirectoryFileList(directory{1}.First, filenameFilter);
+                for file = fileList
+                    filesFound.push(fullfile(directory{1}.First, file{1}));
+                end
+            end
+            fileNames = filesFound.GetAndClear;
+        end
+        
     end
 end
 
