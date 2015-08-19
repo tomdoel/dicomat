@@ -8,7 +8,7 @@ DicoMat provides Dicom file reading functions that are faster than the Matlab ve
  * DMdicominfo - loads DICOM tags from a file and returns them as a MATLAB struct
  * DMdicomread- reads DICOM pixel data from a file
  
-Please note: while these functions are used in a similar way to the corresponding methods of the Matlab Image Processing Toolbox, they are not guaranteed to return the exact same output in all circumstances.
+Please note: while these functions are used in a similar way to the corresponding methods of the Matlab Image Processing Toolbox, they are not guaranteed to return the exact same output in all circumstances. DicoMat may not work for all DICOM files.
 
 ## DICOM file grouping
 
