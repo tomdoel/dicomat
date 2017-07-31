@@ -265,6 +265,7 @@ end
 function cuda_compiler = GetCudaCompiler
     if ispc
         [status, cuda_compiler] = system('where nvcc');
+        cuda_compiler = split(cuda_compiler, char(13));
 
         if status ~= 0
             cuda_compiler = TryToFindCudaCompilerPc(fullfile(getenv('ProgramFiles'), 'NVIDIA GPU Computing Toolkit', 'CUDA'));
@@ -279,7 +280,7 @@ function cuda_compiler = GetCudaCompiler
         [status, cuda_compiler] = system('which nvcc');
 
         if status == 0
-            cuda_compiler = CoreTextUtilities.RemoveNonprintableCharacters(cuda_compiler);
+            cuda_compiler = CoreTextUtilities.RemoveNonprintableCharactersAndStrip(cuda_compiler);
         else
             if 2 == exist('/usr/local/cuda/bin/nvcc', 'file')
                 cuda_compiler = '/usr/local/cuda/bin/nvcc';
@@ -297,7 +298,7 @@ function compiler = TryToFindCudaCompilerPc(base_dir)
     for dir_name = directories
         bin_dir = fullfile(base_dir, dir_name{1}, 'bin');
         if isdir(bin_dir)
-            compiler = bin_dir;
+            compiler = fullfile(bin_dir, 'NVCC.EXE');
             return;
         end
     end
